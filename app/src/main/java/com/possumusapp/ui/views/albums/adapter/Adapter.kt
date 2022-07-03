@@ -1,18 +1,15 @@
-package com.possumusapp.ui.adapter
+package com.possumusapp.ui.views.albums.adapter
 
-import android.content.DialogInterface
-import android.text.Layout
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.possumusapp.R
-import com.possumusapp.data.model.Albums
+import com.possumusapp.data.model.Data
 
-class Adapter(private val list: List<Albums>, private val onClickListener: (Albums)->Unit): RecyclerView.Adapter<ViewHolder>() {
+class Adapter(private val list: List<Data>, private val onClickListener: (Data)->Unit): RecyclerView.Adapter<ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        return ViewHolder(layoutInflater.inflate(R.layout.item,parent,false))
+        return ViewHolder(layoutInflater.inflate(R.layout.album_item,parent,false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

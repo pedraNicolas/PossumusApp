@@ -1,23 +1,23 @@
-package com.possumusapp.data.model.repositories
+package com.possumusapp.data.repositories
 
 import android.util.Log
 import com.possumusapp.core.JsonPlaceInterface
 import com.possumusapp.core.JsonPlaceService
-import com.possumusapp.data.model.Albums
+import com.possumusapp.data.model.Data
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 object AlbumRepository {
 
-    fun getData(callback: (List<Albums>) -> Unit) {
+    fun getData(url: String,callback: (List<Data>) -> Unit) {
         JsonPlaceService.getInstance()
             .create(JsonPlaceInterface::class.java)
-            .getAlbumsList("/albums")
-            .enqueue(object : Callback<List<Albums>> {
+            .getAlbumsList(url)
+            .enqueue(object : Callback<List<Data>> {
                 override fun onResponse(
-                    call: Call<List<Albums>>,
-                    response: Response<List<Albums>>
+                    call: Call<List<Data>>,
+                    response: Response<List<Data>>
                 ) {
                     if (!response.isSuccessful) {
                         Log.d("HTTP Code", "${response.code()}")
@@ -28,7 +28,7 @@ object AlbumRepository {
                     return callback(list)
                 }
 
-                override fun onFailure(call: Call<List<Albums>>, t: Throwable) {
+                override fun onFailure(call: Call<List<Data>>, t: Throwable) {
                     Log.d("ApiService Failure: ", "${t.message}")
                 }
             })
