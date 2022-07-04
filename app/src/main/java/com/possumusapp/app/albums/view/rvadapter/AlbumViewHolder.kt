@@ -1,12 +1,11 @@
-package com.possumusapp.app.albums.view.adapter
+package com.possumusapp.app.albums.view.rvadapter
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.possumusapp.app.albums.model.AlbumModel
 import com.possumusapp.databinding.AlbumItemBinding
 
-class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class AlbumViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val binding = AlbumItemBinding.bind(view)
 
     fun render(list: AlbumModel, onClickListener: (AlbumModel) -> Unit) {

@@ -20,7 +20,8 @@
             android:text="TextView"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.501"
+            app:layout_constraintStart_toEndOf="@+id/imageViewId"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -30,7 +31,7 @@
             android:text="TextView"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageViewId"
             app:layout_constraintTop_toBottomOf="@+id/userIdTextView" />
 
         <TextView
@@ -40,8 +41,18 @@
             android:text="TextView"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageViewId"
             app:layout_constraintTop_toBottomOf="@+id/idTextView" />
 
+        <ImageView
+            android:id="@+id/imageViewId"
+            android:layout_width="300px"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

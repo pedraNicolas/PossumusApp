@@ -16,6 +16,9 @@
         android:theme="@style/Theme.PossumusApp"
         tools:targetApi="31">
         <activity
+            android:name="com.possumusapp.app.photos.view.PhotoActivity"
+            android:exported="false" />
+        <activity
             android:name="com.possumusapp.app.albums.view.AlbumActivity"
             android:exported="true">
             <intent-filter>

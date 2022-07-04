@@ -9,7 +9,7 @@ import retrofit2.Response
 object AlbumService : Service() {
 
     fun fetchData(url: String, callback: (List<AlbumModel>) -> Unit) {
-        getInstance().create(ServiceInterface::class.java)
+        getInstance().create(AlbumServiceInterface::class.java)
             .getAlbumsList(url)
             .enqueue(object : Callback<List<AlbumModel>> {
                 override fun onResponse(
