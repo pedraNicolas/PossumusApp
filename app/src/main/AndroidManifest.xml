@@ -16,7 +16,7 @@
         android:theme="@style/Theme.PossumusApp"
         tools:targetApi="31">
         <activity
-            android:name=".ui.views.albums.MainActivity"
+            android:name="com.possumusapp.app.albums.view.AlbumActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

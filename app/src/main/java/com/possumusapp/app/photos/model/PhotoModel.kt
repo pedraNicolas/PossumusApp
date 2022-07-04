@@ -1,19 +1,16 @@
-package com.possumusapp.data.model
-
+package com.possumusapp.app.photos.model
 
 import com.google.gson.annotations.SerializedName
 
-data class Data(
-    @SerializedName("userId")
-    var userId: Int?,
+data class PhotoModel(
+    @SerializedName("albumId")
+    var albumId: Int?,
     @SerializedName("id")
     var id: Int?,
     @SerializedName("title")
     var title: String?,
-    @SerializedName("almbumId")
-    val almbumId: Int?,
     @SerializedName("url")
-    val url: String?,
+    var url: String?,
     @SerializedName("thumbnailUrl")
-    val thumbnailUrl: String?
+    var thumbnailUrl: String?
 )

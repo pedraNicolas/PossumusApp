@@ -1,22 +1,18 @@
-package com.possumusapp.core
+package com.possumusapp.services
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
-import okhttp3.Dispatcher
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class JsonPlaceService {
+open class Service {
 
     companion object {
-        private const val BASE_URL = "https://jsonplaceholder.typicode.com/"
+        private const val baseUrl = "https://jsonplaceholder.typicode.com/"
         private var retrofit: Retrofit? = null
 
         fun getInstance(): Retrofit {
             if (retrofit == null) {
                 retrofit = Retrofit.Builder()
-                    .baseUrl(BASE_URL)
+                    .baseUrl(baseUrl)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
             }
