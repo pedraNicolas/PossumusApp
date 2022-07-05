@@ -13,7 +13,7 @@
         android:background="@color/black">
 
         <TextView
-            android:id="@+id/userIdTextView"
+            android:id="@+id/albumIdTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -32,7 +32,7 @@
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageViewId"
-            app:layout_constraintTop_toBottomOf="@+id/userIdTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/albumIdTextView" />
 
         <TextView
             android:id="@+id/titleTextView"
@@ -44,10 +44,11 @@
             app:layout_constraintStart_toEndOf="@+id/imageViewId"
             app:layout_constraintTop_toBottomOf="@+id/idTextView" />
 
+
         <ImageView
             android:id="@+id/imageViewId"
-            android:layout_width="300px"
-            android:layout_height="0dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:scaleType="centerCrop"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"

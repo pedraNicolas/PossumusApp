@@ -5,13 +5,13 @@ import com.possumusapp.app.albums.model.AlbumModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
-object AlbumService : Service() {
+class AlbumService @Inject constructor(
+    private val api: AlbumServiceInterface) {
 
     fun fetchData(url: String, callback: (List<AlbumModel>) -> Unit) {
-        getInstance().create(AlbumServiceInterface::class.java)
-            .getAlbumsList(url)
-            .enqueue(object : Callback<List<AlbumModel>> {
+        api.getAlbumsList(url).enqueue(object : Callback<List<AlbumModel>> {
                 override fun onResponse(
                     call: Call<List<AlbumModel>>,
                     response: Response<List<AlbumModel>>

@@ -5,12 +5,13 @@ import com.possumusapp.app.photos.model.PhotoModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
-object PhotoService: Service() {
+class PhotoService @Inject constructor(
+    private val api: PhotoServiceInterface){
+
     fun fetchData(url: String, callback: (List<PhotoModel>) -> Unit) {
-        getInstance().create(PhotoServiceInterface::class.java)
-            .getPhotoList(url)
-            .enqueue(object : Callback<List<PhotoModel>> {
+        api.getPhotoList(url).enqueue(object : Callback<List<PhotoModel>> {
                 override fun onResponse(
                     call: Call<List<PhotoModel>>,
                     response: Response<List<PhotoModel>>

@@ -7,49 +7,65 @@
     android:padding="16dp"
     tools:context=".app.albums.view.AlbumActivity">
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|top"
+        android:gravity="center"
+        android:text="PossumusApp"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/closeSesion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="7dp"
+        android:layout_marginRight="32dp"
+        android:text="Cerrar Sesión"
+        android:textColor="@color/orange"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/textView">
 
         <TextView
+            android:id="@+id/userWelcomeId"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="start|top"
+            android:layout_weight="1"
             android:gravity="center"
-            android:text="PossumusApp"
+            android:maxLines="2"
+            android:text="Welcome $User"
             android:textColor="@color/black"
-            android:textSize="30sp"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/viewAllPhotos"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:maxLines="2"
+            android:text="View All Photos"
+            android:textColor="@color/blue"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
-        <Space
-            android:layout_width="32dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:boxStrokeColor="@color/black">
-
-            <AutoCompleteTextView
-                android:id="@+id/autoCompleteTextView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="right|center_horizontal"
-                android:inputType="none"
-                android:text="Albums"
-                android:textColor="@color/black"
-                android:textColorHint="@color/black" />
-
-        </com.google.android.material.textfield.TextInputLayout>
 
 
     </LinearLayout>

@@ -3,6 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android'
     id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -43,6 +45,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation "androidx.activity:activity-ktx:1.5.0"
+    implementation "androidx.fragment:fragment-ktx:1.5.0"
 
     //RecyclerView Library
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
@@ -51,9 +54,9 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.13.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
-    //ViewModel
+    //ViewModel Library
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0'
-    //LiveData
+    //LiveData Library
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.0'
 
     //Retrofit Library
@@ -61,10 +64,15 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.6"
+    //Coroutines Library
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1"
 
-    //Picasso
+    //Picasso Library
     implementation "com.squareup.picasso:picasso:2.71828"
+    //Dagger Hilt Library
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

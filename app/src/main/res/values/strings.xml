@@ -6,6 +6,19 @@
         <item>Albums</item>
         <item>Photos</item>
     </string-array>
+    <string-array name="users">
+        <item>All Users</item>
+        <item>Leanne Graham</item>
+        <item>Ervin Howell</item>
+        <item>Clementine Bauch</item>
+        <item>Patricia Lebsack</item>
+        <item>Chelsey Dietrich</item>
+        <item>Mrs. Dennis Schulist</item>
+        <item>Kurtis Weissnat</item>
+        <item>Nicholas Runolfsdottir V</item>
+        <item>Glenna Reichert</item>
+        <item>Clementina DuBuque</item>
+    </string-array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
