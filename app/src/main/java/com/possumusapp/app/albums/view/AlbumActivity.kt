@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.possumusapp.R
@@ -23,7 +24,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AlbumActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAlbumBinding
-    private val viewModel: AlbumViewModel by viewModels()
+    val viewModel: AlbumViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAlbumBinding.inflate(layoutInflater)
@@ -32,35 +33,20 @@ class AlbumActivity : AppCompatActivity() {
         viewModel.albumModel.observe(this, Observer {
             initRecyclerView(it)
         })
-        closeSesionButtom()
+        viewModel.isLoading.observe(this, Observer {
+            binding.albumProgressBarId.isVisible = it
+        })
+
     }
 
-
-    override fun onBackPressed() {
-        //Boton desactivado
-    }
-
-    // Funcion que retorna los albums, dependiendo el usuario que se seleccione en el Login
-    private fun getDataFromActivity() {
-        val user = intent.extras?.getParcelable<UserModel>("user")
-        if(user==null){
-            binding.viewAllPhotos.visibility = View.VISIBLE
-            allPhotosButtom()
-            binding.userWelcomeId.text = "Welcome"
-            viewModel.fetchAlbumData("/albums")
-        }else{
-            binding.viewAllPhotos.visibility = View.GONE
-            binding.userWelcomeId.text = "Welcome ${user.name}"
-            viewModel.fetchAlbumData("users/${user.id}/albums")
-        }
-    }
-    //Boton que devuelve el listado de todas las fotos siempre.
-    private fun allPhotosButtom(){
-        binding.viewAllPhotos.setOnClickListener {
-            intent = Intent(this@AlbumActivity,PhotoActivity::class.java)
+    override fun onResume() {
+        //Cerrar sesion para cambiar de usuario
+        binding.closeSesion.setOnClickListener {
+            intent = Intent(this@AlbumActivity, LoginActivity::class.java)
             finish()
             startActivity(intent)
         }
+        super.onResume()
     }
 
     //Funcion que inicia el RecyclerView
@@ -68,24 +54,44 @@ class AlbumActivity : AppCompatActivity() {
         binding.recyclerViewId.layoutManager = LinearLayoutManager(this)
         binding.recyclerViewId.adapter = AlbumAdapter(list) { onItemSelected(it) }
     }
+
+    // Funcion que retorna los albums, dependiendo el usuario que se seleccione en el Login
+    private fun getDataFromActivity() {
+        val user = intent.extras?.getParcelable<UserModel>("user")
+        if (user == null) {
+            binding.viewAllPhotos.visibility = View.VISIBLE
+            allPhotosButtom()
+            binding.userWelcomeId.text = "Welcome"
+            viewModel.onCreate("/albums")
+        } else {
+            binding.viewAllPhotos.visibility = View.GONE
+            binding.userWelcomeId.text = "Welcome ${user.name}"
+            viewModel.onCreate("users/${user.id}/albums")
+        }
+    }
+
+    //Boton que devuelve el listado de todas las fotos siempre.
+    private fun allPhotosButtom() {
+        binding.viewAllPhotos.setOnClickListener {
+            intent = Intent(this@AlbumActivity, PhotoActivity::class.java)
+            finish()
+            startActivity(intent)
+        }
+    }
+
     //Funcion que escucha cual item del RecyclerView ha sido seleccionado y lo envia al siguiente activity.
     private fun onItemSelected(album: AlbumModel) {
         val user = intent.extras?.getParcelable<UserModel>("user")
         intent = Intent(this@AlbumActivity, PhotoActivity::class.java).apply {
             putExtra("album", album)
-            putExtra("user",user)
+            putExtra("user", user)
         }
         finish()
         startActivity(intent)
     }
 
-    //boton de cierre de sesion, es necesario para seleccionar otro usuario
-    fun closeSesionButtom(){
-        binding.closeSesion.setOnClickListener{
-            intent = Intent(this@AlbumActivity, LoginActivity::class.java)
-            finish()
-            startActivity(intent)
-        }
+    override fun onBackPressed() {
+        //Boton desactivado
     }
 }
 

@@ -1,7 +1,10 @@
 package com.possumusapp.services
 
 import android.util.Log
+import com.possumusapp.app.albums.model.AlbumModel
 import com.possumusapp.app.photos.model.PhotoModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -10,23 +13,9 @@ import javax.inject.Inject
 class PhotoService @Inject constructor(
     private val api: PhotoServiceInterface){
 
-    fun fetchData(url: String, callback: (List<PhotoModel>) -> Unit) {
-        api.getPhotoList(url).enqueue(object : Callback<List<PhotoModel>> {
-                override fun onResponse(
-                    call: Call<List<PhotoModel>>,
-                    response: Response<List<PhotoModel>>
-                ) {
-                    if (!response.isSuccessful) {
-                        Log.d("HTTP Code", "${response.code()}")
-                        return
-                    }
-                    val list = response.body() ?: emptyList()
-                    return callback(list)
-                }
-
-                override fun onFailure(call: Call<List<PhotoModel>>, t: Throwable) {
-                    Log.d("Album Service Failure: ", "${t.message}")
-                }
-            })
+    suspend fun getPhotoQuotes(url: String):List<PhotoModel>{
+        return withContext(Dispatchers.IO){
+            api.getPhotoList(url).body() ?: emptyList()
+        }
     }
 }

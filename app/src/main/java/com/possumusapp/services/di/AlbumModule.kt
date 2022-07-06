@@ -1,5 +1,7 @@
 package com.possumusapp.services.di
 
+import com.possumusapp.app.albums.model.AlbumCache
+import com.possumusapp.app.albums.model.AlbumModel
 import com.possumusapp.services.AlbumServiceInterface
 import dagger.Module
 import dagger.Provides
@@ -18,4 +20,5 @@ object AlbumModule {
     fun provideAlbumService(retrofit: Retrofit): AlbumServiceInterface {
         return retrofit.create(AlbumServiceInterface::class.java)
     }
+
 }
