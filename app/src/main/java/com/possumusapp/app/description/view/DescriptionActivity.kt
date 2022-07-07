@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.possumusapp.R
 import com.possumusapp.app.albums.model.AlbumModel
-import com.possumusapp.app.albums.view.AlbumActivity
 import com.possumusapp.app.login.model.UserModel
 import com.possumusapp.app.photos.model.PhotoModel
 import com.possumusapp.app.photos.view.PhotoActivity
@@ -24,6 +23,7 @@ class DescriptionActivity : AppCompatActivity() {
         Picasso.get()
             .load(photo?.url)
             .placeholder(R.drawable.progress_animation)
+            .error(R.drawable.progress_animation)
             .into(binding.imageView)
         binding.albumId.text="Album Id: ${photo?.albumId.toString()}"
         binding.id.text="Id: ${photo?.id.toString()}"

@@ -21,6 +21,7 @@ class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         Picasso.get()
             .load(photo.thumbnailUrl)
             .placeholder(R.drawable.progress_animation)
+            .error(R.drawable.progress_animation)
             .into(binding.imageViewId)
         itemView.setOnClickListener { onClickListener(photo) }
     }

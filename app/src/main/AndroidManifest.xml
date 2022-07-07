@@ -18,6 +18,9 @@
         android:theme="@style/Theme.PossumusApp"
         tools:targetApi="31">
         <activity
+            android:name=".app.error.ErrorActivity"
+            android:exported="false" />
+        <activity
             android:name="com.possumusapp.app.description.view.DescriptionActivity"
             android:exported="false" />
         <activity

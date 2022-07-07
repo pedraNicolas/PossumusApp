@@ -1,11 +1,6 @@
 package com.possumusapp.app.login.view
 
-import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.net.NetworkInfo
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.InputType
@@ -14,13 +9,15 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 import com.possumusapp.R
 import com.possumusapp.app.albums.model.AlbumCache
-import com.possumusapp.app.albums.model.AlbumModel
 import com.possumusapp.app.albums.view.AlbumActivity
+import com.possumusapp.app.error.ErrorActivity
 import com.possumusapp.app.login.model.LoginCache
 import com.possumusapp.app.login.model.UserModel
 import com.possumusapp.app.login.viewmodel.LoginViewModel
+import com.possumusapp.commons.NetworkStatusInterface
 import com.possumusapp.databinding.ActivityLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -31,10 +28,15 @@ class LoginActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
     @Inject
     lateinit var loginCache: LoginCache
 
+    @Inject
+    lateinit var networkStatusInterface: NetworkStatusInterface
 
+    @Inject
+    lateinit var albumCache: AlbumCache
 
     private val viewModel: LoginViewModel by viewModels()
     private lateinit var binding: ActivityLoginBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
@@ -59,14 +61,19 @@ class LoginActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
 
     //Funcion que escucha al DropDown y determina que usuario ha sido seleccionado.
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
         when (parent?.getItemAtPosition(position).toString()) {
             "All Users" -> {
-                if (isNetworkAvailable(this)) {
+                val cache =albumCache.albums["/albums"]==null
+                val connection = networkStatusInterface.isNetworkAvailable(this)
+                if (!cache || connection) {
                     intent = Intent(this@LoginActivity, AlbumActivity::class.java)
                     finish()
                     startActivity(intent)
                 } else {
                     Toast.makeText(this, "No Internet Connection", Toast.LENGTH_LONG).show()
+                    intent = Intent(this@LoginActivity, ErrorActivity::class.java)
+                    startActivity(intent)
                 }
             }
             "Leanne Graham" -> cacheCheck("/users/1")
@@ -82,29 +89,40 @@ class LoginActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
         }
 
     }
-
-    //Funcion que chequea el cache de usuarios antes de iniciar un activity
+    //Funcion que chequea el cache de usuarios y la conexion a internet antes de iniciar un activity
     private fun cacheCheck(url: String) {
         viewModel.onCreate(url)
+        val connection = networkStatusInterface.isNetworkAvailable(this)
+        val cache = loginCache.users[url] == null
         when {
-            loginCache.users[url] == null && isNetworkAvailable(this) -> {
-                viewModel.userModel.observe(this, androidx.lifecycle.Observer {
-                    loginCache.users[url] = it
-                    changeActivity(it)
+            cache && connection -> {
+                viewModel.userModel.observe(this, Observer {
+                    val code = it.code()
+                    val userModel = it.body()
+                    when {
+                        code != 200 -> {
+                            intent = Intent(this@LoginActivity, ErrorActivity::class.java)
+                            startActivity(intent)
+                            Toast.makeText(this, "Error: $code", Toast.LENGTH_SHORT).show()
+                        }
+                        code == 200 && userModel == null -> {
+                            intent = Intent(this@LoginActivity, ErrorActivity::class.java)
+                            startActivity(intent)
+                            Toast.makeText(this, "User is Empty", Toast.LENGTH_SHORT).show()
+                        }
+                        code == 200 && userModel != null -> {
+                            loginCache.users[url] = userModel
+                            changeActivity(userModel)
+                        }
+                    }
                 })
             }
-            loginCache.users[url] != null-> changeActivity(loginCache.users[url]!!)
-            else -> Toast.makeText(this,"No Internet Connection",Toast.LENGTH_SHORT).show()
-        }
-
-        if (loginCache.users[url] != null) {
-            changeActivity(loginCache.users[url]!!)
-        } else {
-            viewModel.userModel.observe(this, androidx.lifecycle.Observer {
-                loginCache.users[url] = it
-                changeActivity(it)
-
-            })
+            !cache -> changeActivity(loginCache.users[url]!!)
+            else -> {
+                Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
+                intent = Intent(this@LoginActivity, ErrorActivity::class.java)
+                startActivity(intent)
+            }
         }
     }
 
@@ -113,26 +131,8 @@ class LoginActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
         intent = Intent(this@LoginActivity, AlbumActivity::class.java).apply {
             putExtra("user", user)
         }
-        finish()
         startActivity(intent)
     }
-
-    private fun isNetworkAvailable(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val nw = connectivityManager.activeNetwork ?: return false
-            val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
-            return when {
-                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-                else -> false
-            }
-        } else {
-            return connectivityManager.activeNetworkInfo?.isConnected ?: false
-        }
-    }
-
 }
 
 

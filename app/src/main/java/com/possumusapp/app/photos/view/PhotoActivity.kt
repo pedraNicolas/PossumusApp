@@ -3,6 +3,7 @@ package com.possumusapp.app.photos.view
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
@@ -12,14 +13,23 @@ import com.possumusapp.app.albums.model.AlbumModel
 import com.possumusapp.app.albums.view.AlbumActivity
 import com.possumusapp.app.description.view.DescriptionActivity
 import com.possumusapp.app.login.model.UserModel
+import com.possumusapp.app.photos.model.PhotoCache
 import com.possumusapp.app.photos.model.PhotoModel
 import com.possumusapp.app.photos.view.adapter.PhotoAdapter
 import com.possumusapp.app.photos.viewmodel.PhotoViewModel
+import com.possumusapp.commons.NetworkStatusInterface
 import com.possumusapp.databinding.ActivityPhotoBinding
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PhotoActivity : AppCompatActivity() {
+    @Inject
+    lateinit var photoCache: PhotoCache
+
+    @Inject
+    lateinit var networkStatusInterface: NetworkStatusInterface
+
     private lateinit var binding: ActivityPhotoBinding
     private val viewModel: PhotoViewModel by viewModels()
 
@@ -28,42 +38,60 @@ class PhotoActivity : AppCompatActivity() {
         binding = ActivityPhotoBinding.inflate(layoutInflater)
         setContentView(binding.root)
         getDataFromActivity()
-        viewModel.photoModel.observe(this, Observer {
-            initRecyclerView(it)
-        })
         viewModel.isLoading.observe(this, Observer {
             binding.photoProgressBarId.isVisible = it
         })
     }
-
     // Funcion que retorna las fotos, dependiendo del usuario que se seleccione en el Login y del album que se selecciono.
     private fun getDataFromActivity() {
         val album = intent.extras?.getParcelable<AlbumModel>("album")
         val user = intent.extras?.getParcelable<UserModel>("user")
+        var url = "/photos"
         when {
             (album == null && user == null) -> {
                 binding.userPhotoWelcomeId.text = "Welcome \nto all Photos"
-                viewModel.onCreate("/photos")
+                checkCacheAndConnection(url)
             }
             (album == null && user != null) -> {
-                binding.userPhotoWelcomeId.text = "Welcome ${user?.name} \nto all Photos"
-                viewModel.onCreate("/photos")
+                binding.userPhotoWelcomeId.text = "Welcome ${user.name} \nto all Photos"
+                checkCacheAndConnection(url)
+
             }
             (album != null && user == null) -> {
+                url = "albums/${album.id}/photos"
                 binding.userPhotoWelcomeId.text = "Welcome to Photos\n from album ${album.id} "
-                viewModel.onCreate("albums/${album.id}/photos")
+                checkCacheAndConnection(url)
             }
             (album != null && user != null) -> {
-                binding.userPhotoWelcomeId.text =
-                    "Welcome ${user?.name}\n to Photos from album ${album.id} "
-                viewModel.onCreate("albums/${album.id}/photos")
+                url = "albums/${album.id}/photos"
+                binding.userPhotoWelcomeId.text = "Welcome ${user.name}\n to Photos from album ${album.id} "
+                checkCacheAndConnection(url)
+            }
+        }
+    }
+    //Funcion que verifica la existencia de cache y de conexion a internet
+    private fun checkCacheAndConnection(url:String){
+        val connection = networkStatusInterface.isNetworkAvailable(this)
+        val cache = photoCache.photos[url] != null
+        when {
+            !cache && connection -> {
+                viewModel.onCreate(url)
+                viewModel.photoModel.observe(this, Observer {
+                    photoCache.photos[url] = it
+                    initRecyclerView(it)
+                })
+            }
+            !cache && !connection -> {
+                initRecyclerView(emptyList())
+            }
+            cache -> {
+                initRecyclerView(photoCache.photos[url]!!)
             }
         }
     }
 
     //El boton de back retorna a la actividad de albums, vuelve a enviarle el usuario que habia sido seleccionado en el Login.
     override fun onBackPressed() {
-        val album = intent.extras?.getParcelable<AlbumModel>("album")
         val user = intent.extras?.getParcelable<UserModel>("user")
         intent = Intent(this@PhotoActivity, AlbumActivity::class.java).apply {
             putExtra("user", user)
@@ -72,7 +100,6 @@ class PhotoActivity : AppCompatActivity() {
         startActivity(intent)
         super.onBackPressed()
     }
-
     //Funcion que inicia el Recycler View
     private fun initRecyclerView(list: List<PhotoModel>) {
         binding.recyclerViewId.layoutManager = LinearLayoutManager(this)

@@ -1,5 +1,11 @@
 package com.possumusapp.services.di
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
+import com.possumusapp.commons.NetworkStatusImpl
+import com.possumusapp.commons.NetworkStatusInterface
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,5 +24,11 @@ object ServiceModule {
             .baseUrl("https://jsonplaceholder.typicode.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideNetworkStatus():NetworkStatusInterface{
+        return NetworkStatusImpl()
     }
 }

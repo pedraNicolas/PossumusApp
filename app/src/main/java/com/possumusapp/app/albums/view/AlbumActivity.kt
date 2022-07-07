@@ -4,13 +4,11 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.possumusapp.R
+import com.possumusapp.app.albums.model.AlbumCache
 import com.possumusapp.app.albums.model.AlbumModel
 import com.possumusapp.databinding.ActivityAlbumBinding
 import com.possumusapp.app.albums.view.rvadapter.AlbumAdapter
@@ -18,11 +16,18 @@ import com.possumusapp.app.albums.viewmodel.AlbumViewModel
 import com.possumusapp.app.login.model.UserModel
 import com.possumusapp.app.login.view.LoginActivity
 import com.possumusapp.app.photos.view.PhotoActivity
+import com.possumusapp.commons.NetworkStatusInterface
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class AlbumActivity : AppCompatActivity() {
+    @Inject
+    lateinit var albumCache: AlbumCache
+
+    @Inject
+    lateinit var networkStatusInterface: NetworkStatusInterface
+
     private lateinit var binding: ActivityAlbumBinding
     val viewModel: AlbumViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,9 +35,6 @@ class AlbumActivity : AppCompatActivity() {
         binding = ActivityAlbumBinding.inflate(layoutInflater)
         setContentView(binding.root)
         getDataFromActivity()
-        viewModel.albumModel.observe(this, Observer {
-            initRecyclerView(it)
-        })
         viewModel.isLoading.observe(this, Observer {
             binding.albumProgressBarId.isVisible = it
         })
@@ -58,19 +60,52 @@ class AlbumActivity : AppCompatActivity() {
     // Funcion que retorna los albums, dependiendo el usuario que se seleccione en el Login
     private fun getDataFromActivity() {
         val user = intent.extras?.getParcelable<UserModel>("user")
+        val connection = networkStatusInterface.isNetworkAvailable(this)
+        var url = "/albums"
         if (user == null) {
             binding.viewAllPhotos.visibility = View.VISIBLE
-            allPhotosButtom()
             binding.userWelcomeId.text = "Welcome"
-            viewModel.onCreate("/albums")
+            val cache = albumCache.albums[url] != null
+            allPhotosButtom()
+            when {
+                !cache && connection -> {
+                    viewModel.onCreate(url)
+                    viewModel.albumModel.observe(this, Observer {
+                        albumCache.albums[url] = it
+                        initRecyclerView(it)
+                    })
+                }
+                !cache && !connection -> {
+                    initRecyclerView(emptyList())
+                }
+                cache -> {
+                    initRecyclerView(albumCache.albums[url]!!)
+                }
+            }
         } else {
             binding.viewAllPhotos.visibility = View.GONE
             binding.userWelcomeId.text = "Welcome ${user.name}"
-            viewModel.onCreate("users/${user.id}/albums")
+            url = "users/${user.id}/albums"
+            val cache = albumCache.albums[url] != null
+            when {
+                !cache && connection -> {
+                    viewModel.onCreate(url)
+                    viewModel.albumModel.observe(this, Observer {
+                        albumCache.albums[url] = it
+                        initRecyclerView(it)
+                    })
+                }
+                !cache && !connection -> {
+                    initRecyclerView(emptyList())
+                }
+                cache -> {
+                    initRecyclerView(albumCache.albums[url]!!)
+                }
+            }
         }
     }
 
-    //Boton que devuelve el listado de todas las fotos siempre.
+    //Boton que devuelve el listado de todas las fotos.
     private fun allPhotosButtom() {
         binding.viewAllPhotos.setOnClickListener {
             intent = Intent(this@AlbumActivity, PhotoActivity::class.java)

@@ -11,7 +11,6 @@ import javax.inject.Inject
 
 class AlbumService @Inject constructor(
     private val api: AlbumServiceInterface) {
-
     suspend fun getAlbumQuotes(url: String):List<AlbumModel>{
         return withContext(Dispatchers.IO){
             api.getAlbumsList(url).body() ?: emptyList()

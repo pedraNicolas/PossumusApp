@@ -1,17 +1,17 @@
 package com.possumusapp.app.albums.model
 
+import com.possumusapp.commons.NetworkStatusInterface
 import com.possumusapp.services.AlbumService
 import javax.inject.Inject
 
-class AlbumRepository @Inject constructor(private val albumService: AlbumService,private val albumCache: AlbumCache) {
-
+class AlbumRepository
+@Inject constructor(
+    private val albumService: AlbumService,
+    private val albumCache: AlbumCache,
+    private val networkStatusInterface: NetworkStatusInterface
+) {
     suspend fun getAllAlbumQuotes(url: String): List<AlbumModel> {
-        if (albumCache.albums[url]==null) {
-            val response = albumService.getAlbumQuotes(url)
-            albumCache.albums[url]=response
-            return response
-        } else {
-            return albumCache.albums[url]!!
-        }
+        val list = albumService.getAlbumQuotes(url)
+        return list.filter { AlbumModel -> AlbumModel.userId != null }
     }
 }
