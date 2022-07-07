@@ -45,8 +45,8 @@ class AlbumActivity : AppCompatActivity() {
         //Cerrar sesion para cambiar de usuario
         binding.closeSesion.setOnClickListener {
             intent = Intent(this@AlbumActivity, LoginActivity::class.java)
-            finish()
             startActivity(intent)
+            finish()
         }
         super.onResume()
     }
@@ -121,7 +121,6 @@ class AlbumActivity : AppCompatActivity() {
             putExtra("album", album)
             putExtra("user", user)
         }
-        finish()
         startActivity(intent)
     }
 

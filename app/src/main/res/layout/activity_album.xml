@@ -16,7 +16,9 @@
         android:text="PossumusApp"
         android:textColor="@color/black"
         android:textSize="24sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
         android:id="@+id/closeSesion"
@@ -24,8 +26,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_marginBottom="13dp"
-        android:layout_marginRight="32dp"
-        android:text="Cerrar Sesión"
+        android:layout_marginEnd="48dp"
+        android:text="Sign Of"
         android:textColor="@color/orange"
         android:textSize="16sp"
         android:textStyle="bold"

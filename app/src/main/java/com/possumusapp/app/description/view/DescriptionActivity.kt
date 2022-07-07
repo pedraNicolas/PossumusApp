@@ -36,8 +36,7 @@ class DescriptionActivity : AppCompatActivity() {
             putExtra("user", user)
             putExtra("album", album)
         }
-        finish()
         startActivity(intent)
-        super.onBackPressed()
+        super.finish()
     }
 }

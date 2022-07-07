@@ -21,6 +21,7 @@ import com.possumusapp.commons.NetworkStatusInterface
 import com.possumusapp.databinding.ActivityLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.system.exitProcess
 
 
 @AndroidEntryPoint
@@ -41,7 +42,11 @@ class LoginActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+    }
+
+    override fun onResume() {
         dropDownMenu()
+        super.onResume()
     }
 
     //Creacion del DropDown Menu
@@ -64,7 +69,7 @@ class LoginActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
 
         when (parent?.getItemAtPosition(position).toString()) {
             "All Users" -> {
-                val cache =albumCache.albums["/albums"]==null
+                val cache = albumCache.albums["/albums"] == null
                 val connection = networkStatusInterface.isNetworkAvailable(this)
                 if (!cache || connection) {
                     intent = Intent(this@LoginActivity, AlbumActivity::class.java)
@@ -93,9 +98,9 @@ class LoginActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
     private fun cacheCheck(url: String) {
         viewModel.onCreate(url)
         val connection = networkStatusInterface.isNetworkAvailable(this)
-        val cache = loginCache.users[url] == null
+        val cache = loginCache.users[url] != null
         when {
-            cache && connection -> {
+            !cache && connection -> {
                 viewModel.userModel.observe(this, Observer {
                     val code = it.code()
                     val userModel = it.body()
@@ -117,7 +122,7 @@ class LoginActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
                     }
                 })
             }
-            !cache -> changeActivity(loginCache.users[url]!!)
+            cache -> changeActivity(loginCache.users[url]!!)
             else -> {
                 Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
                 intent = Intent(this@LoginActivity, ErrorActivity::class.java)
@@ -132,6 +137,21 @@ class LoginActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
             putExtra("user", user)
         }
         startActivity(intent)
+    }
+
+    private var backPressedTime: Long = 0
+    lateinit var backToast: Toast
+    override fun onBackPressed() {
+        backToast = Toast.makeText(this, "Press back again to close the app.", Toast.LENGTH_LONG)
+        if (backPressedTime + 2000 > System.currentTimeMillis()) {
+            backToast.cancel()
+            super.onBackPressed()
+            finishAffinity()
+            exitProcess(0)
+        } else {
+            backToast.show()
+        }
+        backPressedTime = System.currentTimeMillis()
     }
 }
 

@@ -7,6 +7,8 @@ import com.possumusapp.app.photos.model.PhotoModel
 import com.possumusapp.app.photos.model.PhotoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 
 @HiltViewModel

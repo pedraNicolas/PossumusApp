@@ -61,5 +61,4 @@ class AlbumViewModelTest {
         assert(albumViewModel.isLoading.value == false)
         assert(albumViewModel.albumModel.value == album)
     }
-
 }
