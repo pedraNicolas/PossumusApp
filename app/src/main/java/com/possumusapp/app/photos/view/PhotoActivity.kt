@@ -3,17 +3,13 @@ package com.possumusapp.app.photos.view
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.possumusapp.R
 import com.possumusapp.app.albums.model.AlbumModel
 import com.possumusapp.app.albums.view.AlbumActivity
 import com.possumusapp.app.description.view.DescriptionActivity
-import com.possumusapp.app.error.ErrorActivity
 import com.possumusapp.app.login.model.UserModel
 import com.possumusapp.app.photos.model.PhotoCache
 import com.possumusapp.app.photos.model.PhotoModel
@@ -22,9 +18,6 @@ import com.possumusapp.app.photos.viewmodel.PhotoViewModel
 import com.possumusapp.commons.NetworkStatusInterface
 import com.possumusapp.databinding.ActivityPhotoBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withTimeout
-import okhttp3.OkHttpClient
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -34,9 +27,6 @@ class PhotoActivity : AppCompatActivity() {
 
     @Inject
     lateinit var networkStatusInterface: NetworkStatusInterface
-
-    @Inject
-    lateinit var okHttpClient: OkHttpClient
 
     private lateinit var binding: ActivityPhotoBinding
     private val viewModel: PhotoViewModel by viewModels()

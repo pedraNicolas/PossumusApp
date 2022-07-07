@@ -29,15 +29,6 @@ object ServiceModule {
     }
     @Singleton
     @Provides
-    fun provideRetrofitTimeOut():OkHttpClient{
-        return OkHttpClient.Builder()
-            .connectTimeout(1, TimeUnit.MINUTES)
-            .readTimeout(1, TimeUnit.MINUTES) // read timeout
-            .build()
-    }
-
-    @Singleton
-    @Provides
     fun provideNetworkStatus():NetworkStatusInterface{
         return NetworkStatusImpl()
     }
